@@ -1,0 +1,98 @@
+---
+# Basic demo of using Ansible to create a virtual machine on Pouta.csc.fi
+#
+# You'll need to download and source your credentials before this will work:
+#  https://research.csc.fi/pouta-credentials
+#
+- name: Create virtual machine on cPouta
+  hosts: localhost # The OpenStack modules run on your local machine.
+  connection: local
+
+  vars:
+    # These will need changing based on your project
+    demo_key: test
+    demo_sg: SSH-desktop
+    demo_security_groups: default,{{ demo_sg }} # don't add spaces here!
+    floating_ip: 128.214.252.155
+
+  tasks:
+    - name: Create security group
+      os_security_group: name={{ demo_sg }}
+
+    - name: Add rule to security group to allow http from the internet
+      os_security_group_rule:
+        security_group: "{{ demo_sg }}"
+        protocol: tcp
+        port_range_min: 80
+        port_range_max: 80
+        remote_ip_prefix: 0.0.0.0/0
+
+    - name: Add rule to security group to all ssh from current system
+      os_security_group_rule:
+        security_group: "{{ demo_sg }}"
+        protocol: tcp
+        port_range_min: 22
+        port_range_max: 22
+        remote_ip_prefix: "128.214.252.116/32"
+
+    - name: Create a virtual machine
+      register: result
+      os_server:
+        name: pouta-demo
+        image: CentOS-7
+        flavor: standard.tiny
+        key_name: "{{ demo_key }}"
+        security_groups: "{{ demo_security_groups }}"
+
+    - name: Add new host to inventory
+      add_host: name={{ floating_ip }} groups=new
+    - name: clear ssh known_hosts
+      known_hosts: name={{ floating_ip }} state=absent
+      when: result is changed
+    - name: Wait for instance to be ready
+      wait_for: host={{ floating_ip }} port=22 search_regex=OpenSSH delay=60
+
+- name: Configure demo host
+  hosts: new
+  remote_user: cloud-user
+  become: yes  # sudo to root
+  vars:
+    demo_photo: kajaani.jpg
+    demo_greeting: "Hello from Kajjjaani!"
+
+  tasks:
+   - name: Install a webserver
+     yum: name=httpd state=present
+
+   - name: Deploy demo web page
+     template: src=templates/demo.html.j2 dest=/var/www/html/index.html owner=apache group=apache mode=0644
+
+   - name: Copy a picture of Kajaani
+     copy: src=resources/kajaani.jpg dest=/var/www/html/kajaani.jpg owner=apache group=apache mode=0644
+
+   - name: Install firewalld
+     yum: name=firewalld state=present
+
+   - name: Start firewalld
+     service: name=firewalld state=started enabled=yes
+
+   - name: Wait for firewalld
+     pause: seconds=30
+
+   - name: Configure firewalld for ssh
+     firewalld: service=ssh permanent=true state=enabled
+     notify:
+       - restart firewalld
+
+   - name: Configure firewalld for http
+     firewalld: service=http permanent=true state=enabled
+     notify:
+       - restart firewalld
+
+   - name: Start apache
+     service: name=httpd state=started enabled=yes
+
+  handlers:
+    - name: restart firewalld
+      service: name=firewalld state=restarted
+     
