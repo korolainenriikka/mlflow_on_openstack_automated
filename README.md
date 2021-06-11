@@ -2,11 +2,12 @@
 
 ## Pre-requisites
 
-* Create a CSC virual machine via OpenStack web interface (add here link to prev readme with proper instructions!)
+* Create a CSC virual machine via OpenStack web interface
+    * instructions in  https://github.com/korolainenriikka/mlflow_test README: follow 'Initial setup instructions' 
 
 On the control node:
 
-* Install ansible: `pip install ansible` TODO: add version
+* Install ansible: `pip install ansible`
 
 * Install OpenStack command line tools
     * `sudo pip install python3-dev python-keystoneclient python-novaclient python-glanceclient python-neutronclient`
