@@ -1,0 +1,11 @@
+---
+- name: Destroy created virtual environment
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Delete the virtual machine instance
+      register: result
+      os_server:
+        name: mlflow_env
+        image: Ubuntu-20.04
+        state: absent

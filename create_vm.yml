@@ -1,0 +1,48 @@
+---
+# Current: creates Virtual machine and sets up security requirements
+- name: Create virtual machine on cPouta
+  hosts: localhost # The OpenStack modules run on your local machine.
+  connection: local
+
+  vars:
+    demo_key: ansible-control-node
+    demo_sg: SSH-desktop
+    demo_security_groups: default,{{ demo_sg }} # don't add spaces here!
+    floating_ip: 128.214.252.175
+
+  tasks:
+    - name: Create security group
+      os_security_group: name={{ demo_sg }}
+
+    - name: Add rule to security group to allow http from the internet
+      os_security_group_rule:
+        security_group: "{{ demo_sg }}"
+        protocol: tcp
+        port_range_min: 80
+        port_range_max: 80
+        remote_ip_prefix: 0.0.0.0/0
+
+    - name: Add rule to security group to all ssh from current system
+      os_security_group_rule:
+        security_group: "{{ demo_sg }}"
+        protocol: tcp
+        port_range_min: 22
+        port_range_max: 22
+        remote_ip_prefix: "128.214.252.164/32"
+
+    - name: Create a virtual machine
+      register: result
+      os_server:
+        name: mlflow_env
+        image: Ubuntu-20.04
+        flavor: standard.small
+        key_name: "{{ demo_key }}"
+        security_groups: "{{ demo_security_groups }}"
+
+    - name: Add new host to inventory
+      add_host: name={{ floating_ip }} groups=new
+    - name: clear ssh known_hosts
+      known_hosts: name={{ floating_ip }} state=absent
+      when: result is changed
+    - name: Wait for instance to be ready
+      wait_for: host={{ floating_ip }} port=22 search_regex=OpenSSH delay=60
