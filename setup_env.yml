@@ -1,0 +1,25 @@
+---
+ - name: Set up environment for the ML pipeline
+   hosts: localhost
+   become: yes
+   tasks:
+   - name: Update apt
+     apt:
+       update_cache: yes
+   - name: Install python3-pip
+     apt:
+       name: python3-venv
+   - name: Install virtualenv via pip
+     pip:
+       name: virtualenv
+       executable: pip3
+     become: yes
+     become_user: root
+   
+   - name: Install mlflow
+     pip:
+       name: mlflow
+
+   - name: Run MLflow scikit-elasticnet-wine example
+     ansible.builtin.shell:
+       cmd: mlflow run https://github.com/mlflow/mlflow-example.git --no-conda -P alpha=5.0 >> out.txt

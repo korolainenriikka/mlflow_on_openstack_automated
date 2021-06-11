@@ -11,6 +11,7 @@
     floating_ip: 128.214.252.175
 
   tasks:
+    - debug: var=hostvars[inventory_hostname]['ansible_env'].SSH_CONNECTION.split(' ')[2]    
     - name: Create security group
       os_security_group: name={{ demo_sg }}
 
@@ -28,7 +29,7 @@
         protocol: tcp
         port_range_min: 22
         port_range_max: 22
-        remote_ip_prefix: "128.214.252.164/32"
+        remote_ip_prefix: "{{ ansible_default_ipv4.address }}/32"
 
     - name: Create a virtual machine
       register: result
@@ -46,3 +47,15 @@
       when: result is changed
     - name: Wait for instance to be ready
       wait_for: host={{ floating_ip }} port=22 search_regex=OpenSSH delay=60
+
+    - name: Create a login user
+      user:
+        name: moi
+        password: 'moi'
+        groups: # Empty by default, here we give it some groups	 
+         - sudo
+        state: present
+        shell: /bin/bash       # Defaults to /bin/bash
+        system: no             # Defaults to no
+        createhome: yes        # Defaults to yes
+        home: /home/fideloper  # Defaults to /home/<username>

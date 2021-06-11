@@ -1,5 +1,12 @@
 # Mnist MLProject run automated with Ansible
 
+current: has working playbooks for VM creating & cleanup.
+
+next steps:
+1. parametrize IP addresses
+2. make repo public
+3. start working on mlflow env installations
+
 ## Pre-requisites
 
 * Create a CSC virual machine via OpenStack web interface
