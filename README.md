@@ -1,28 +1,22 @@
-pouta-ansible-demo
-==================
+# Mnist MLProject run automated with Ansible
 
-Simple Ansible demo to deploy a machine to Pouta
+## Pre-requisites
 
-To use this demo you will need:
- - Ansible 2.0:
-   http://docs.ansible.com/intro_installation.html
- - Python >=2.7:
-   Needed by the os_security_group ansible module
- - OpenStack command line tools:
-   http://docs.openstack.org/user-guide/content/install_clients.html
- - Shade: pip install shade
-   http://docs.openstack.org/infra/shade/
- - Access to pouta:
-   https://research.csc.fi/pouta-access
- - Your Pouta openstack RC file:
-   https://research.csc.fi/pouta-install-client
- - Your SSH public key uploaded to Pouta
-   https://pouta.csc.fi/dashboard/project/access_and_security/
+* Create a CSC virual machine via OpenStack web interface (add here link to prev readme with proper instructions!)
 
-Configuration:
+On the control node:
 
-You will need to get some information from your pouta account in order to run this demo. See the comments in demo.yml.
+* Install ansible: `pip install ansible` TODO: add version
 
-To launch the demo:
+* Install OpenStack command line tools
+    * `sudo pip install python3-dev python-keystoneclient python-novaclient python-glanceclient python-neutronclient`
+    * download OpenStack RC file from https://pouta.csc.fi/dashboard/project/api_access/
+    * run `source <project-name>-openrc.sh` to add the env variables needed to use OpenStack CLI
 
-    ansible-playbook demo.yml
+* Add a ssh keypair to control node
+    * run  `nova keypair-add ansible-control-node > openstack-access-key`
+
+
+# Troubleshooting
+
+* Auth plugin requires parameters which were not given: auth_url --> you are missing the env variables, download and source the RC file
