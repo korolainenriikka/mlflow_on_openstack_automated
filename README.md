@@ -8,7 +8,7 @@
 On the control node:
 * Install pip and python3-dev: `sudo apt update && sudo apt install -y python3-pip python3-dev`
 
-* Install ansible: `pip install ansible`
+* Install ansible: `sudo pip install ansible`
 
 * Install OpenStack command line tools
     * `sudo pip install python-keystoneclient python-novaclient python-glanceclient python-neutronclient`
