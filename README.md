@@ -6,11 +6,12 @@
     * instructions in  https://github.com/korolainenriikka/mlflow_test README: follow 'Initial setup instructions' 
 
 On the control node:
+* Install pip and python3-dev: `sudo apt update && sudo apt install -y python3-pip python3-dev`
 
 * Install ansible: `pip install ansible`
 
 * Install OpenStack command line tools
-    * `sudo pip install python3-dev python-keystoneclient python-novaclient python-glanceclient python-neutronclient`
+    * `sudo pip install python-keystoneclient python-novaclient python-glanceclient python-neutronclient`
     * download OpenStack RC file from https://pouta.csc.fi/dashboard/project/api_access/
     * run `source <project-name>-openrc.sh` to add the env variables needed to use OpenStack CLI
 
