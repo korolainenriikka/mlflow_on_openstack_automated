@@ -5,19 +5,18 @@
   connection: local
 
   vars:
-    demo_key: ansible-control-node
-    demo_sg: SSH-desktop
-    demo_security_groups: default,{{ demo_sg }} # don't add spaces here!
-    floating_ip: 128.214.252.175
+    ssh_key: ansible-control-node
+    security_group: SSH-desktop
+    security_groups: default,{{ security_group }} # don't add spaces here!
 
   tasks:
-    - debug: var=hostvars[inventory_hostname]['ansible_env'].SSH_CONNECTION.split(' ')[2]    
+ #   - debug: var=hostvars[inventory_hostname]['ansible_env'].SSH_CONNECTION.split(' ')[2]    
     - name: Create security group
-      os_security_group: name={{ demo_sg }}
+      os_security_group: name={{ security_group }}
 
     - name: Add rule to security group to allow http from the internet
       os_security_group_rule:
-        security_group: "{{ demo_sg }}"
+        security_group: "{{ security_group }}"
         protocol: tcp
         port_range_min: 80
         port_range_max: 80
@@ -25,7 +24,7 @@
 
     - name: Add rule to security group to all ssh from current system
       os_security_group_rule:
-        security_group: "{{ demo_sg }}"
+        security_group: "{{ security_group }}"
         protocol: tcp
         port_range_min: 22
         port_range_max: 22
@@ -33,29 +32,23 @@
 
     - name: Create a virtual machine
       register: result
-      os_server:
+      openstack.cloud.server:
         name: mlflow_env
         image: Ubuntu-20.04
         flavor: standard.small
-        key_name: "{{ demo_key }}"
-        security_groups: "{{ demo_security_groups }}"
+        key_name: "{{ ssh_key }}"
+        security_groups: "{{ security_groups }}"
+      until: (result.openstack is defined)
+   
+    - name: Store the auto-allocated floating IP address
+      set_fact: floating_ip={{ result.openstack.public_v4 }}
 
     - name: Add new host to inventory
       add_host: name={{ floating_ip }} groups=new
+
     - name: clear ssh known_hosts
       known_hosts: name={{ floating_ip }} state=absent
       when: result is changed
+
     - name: Wait for instance to be ready
       wait_for: host={{ floating_ip }} port=22 search_regex=OpenSSH delay=60
-
-    - name: Create a login user
-      user:
-        name: moi
-        password: 'moi'
-        groups: # Empty by default, here we give it some groups	 
-         - sudo
-        state: present
-        shell: /bin/bash       # Defaults to /bin/bash
-        system: no             # Defaults to no
-        createhome: yes        # Defaults to yes
-        home: /home/fideloper  # Defaults to /home/<username>
