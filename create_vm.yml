@@ -1,13 +1,13 @@
 ---
-- name: Create virtual machine on cPouta
-  hosts: localhost # The OpenStack modules run on your local machine.
+- name: Create virtual machine
+  hosts: localhost
   connection: local
 
   vars:
-    ssh_key: ansible-control-node
-    control_node_floating_ip: 128.214.252.169
-    security_group: SSH-control-node
     security_groups: default,{{ security_group }} # don't add spaces here!
+
+  vars_files:
+    - vars
 
   tasks:
     - name: Create security group
@@ -34,8 +34,8 @@
     - name: Store the auto-allocated floating IP address
       set_fact: floating_ip={{ result.openstack.public_v4 }}
 
-    - name: Add new host to inventory
-      add_host: name={{ floating_ip }} groups=mlflow_env
+    - name: Create inventory.txt with host information
+      ansible.builtin.shell: echo "{{ floating_ip }} ansible_user=ubuntu" > inventory.txt
 
     - name: clear ssh known_hosts
       known_hosts: name={{ floating_ip }} state=absent
@@ -45,7 +45,7 @@
       wait_for: host={{ floating_ip }} port=22 search_regex=OpenSSH
       
 - name: Set up environment for the ML pipeline
-  hosts: mlflow_env
+  hosts: all
   become: yes
   tasks:
 
@@ -69,7 +69,7 @@
       name: mlflow
 
 - name: Install Docker
-  hosts: mlflow_env
+  hosts: all
   become: yes
   vars:
     DOCKER_PACKAGES:

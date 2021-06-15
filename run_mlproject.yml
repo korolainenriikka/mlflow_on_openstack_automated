@@ -1,0 +1,25 @@
+---
+ - name: Run mlflow project
+   hosts: all
+   connection: local
+   become: yes
+
+   vars:
+     github_uri: https://github.com/korolainenriikka/mlflow_test.git
+     image_name: mnist-dockerized
+
+   tasks:
+     - name: lol
+       shell: cd /home/ubuntu && echo 'LOL' > LLLLLOL.txt
+
+     - name: Clone mlproject repository
+       ansible.builtin.git:
+         repo: "{{ github_uri }}"
+         dest: '/home/ubuntu/mnist-project'
+       
+     - name: Build docker image
+       ansible.builtin.shell: docker build -t mlflow-docker-example -f mnist_project/Dockerfile .
+
+     - name: Run mlflow project
+       debug: msg='kolmas homma'
+
