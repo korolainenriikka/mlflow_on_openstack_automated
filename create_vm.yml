@@ -1,26 +1,17 @@
 ---
-# Current: creates Virtual machine and sets up security requirements
 - name: Create virtual machine on cPouta
   hosts: localhost # The OpenStack modules run on your local machine.
   connection: local
 
   vars:
     ssh_key: ansible-control-node
-    security_group: SSH-desktop
+    control_node_floating_ip: 128.214.252.169
+    security_group: SSH-control-node
     security_groups: default,{{ security_group }} # don't add spaces here!
 
   tasks:
- #   - debug: var=hostvars[inventory_hostname]['ansible_env'].SSH_CONNECTION.split(' ')[2]    
     - name: Create security group
       os_security_group: name={{ security_group }}
-
-    - name: Add rule to security group to allow http from the internet
-      os_security_group_rule:
-        security_group: "{{ security_group }}"
-        protocol: tcp
-        port_range_min: 80
-        port_range_max: 80
-        remote_ip_prefix: 0.0.0.0/0
 
     - name: Add rule to security group to all ssh from current system
       os_security_group_rule:
@@ -28,7 +19,7 @@
         protocol: tcp
         port_range_min: 22
         port_range_max: 22
-        remote_ip_prefix: "{{ ansible_default_ipv4.address }}/32"
+        remote_ip_prefix: "{{ control_node_floating_ip }}/32"
 
     - name: Create a virtual machine
       register: result
@@ -44,9 +35,109 @@
       set_fact: floating_ip={{ result.openstack.public_v4 }}
 
     - name: Add new host to inventory
-      add_host: name={{ floating_ip }} groups=new
+      add_host: name={{ floating_ip }} groups=mlflow_env
 
     - name: clear ssh known_hosts
       known_hosts: name={{ floating_ip }} state=absent
       when: result is changed
+
+    - name: Wait for instance to be ready
+      wait_for: host={{ floating_ip }} port=22 search_regex=OpenSSH
+      
+- name: Set up environment for the ML pipeline
+  hosts: mlflow_env
+  become: yes
+  tasks:
+
+  - name: Update apt
+    apt:
+      update_cache: yes
+
+  - name: Install python3-pip
+    apt:
+      name: python3-pip
+
+  - name: Install virtualenv via pip
+    pip:
+      name: virtualenv
+      executable: pip3
+    become: yes
+    become_user: root
+   
+  - name: Install mlflow
+    pip:
+      name: mlflow
+
+- name: Install Docker
+  hosts: mlflow_env
+  become: yes
+  vars:
+    DOCKER_PACKAGES:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+    USER: "ubuntu"
+
+  tasks:
+  - name: Update apt packages
+    apt:
+      update_cache: "yes"
+      force_apt_get: "yes"
+
+  - name: Install packages needed for Docker
+    apt:
+      name: "{{ DOCKER_PACKAGES }}"
+      state: present
+      force_apt_get: "yes"
+
+  - name: Add Docker GPG apt Key
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+
+  - name: Save the current Ubuntu release version into a variable
+    shell: lsb_release -cs
+    register: ubuntu_version
+
+  - name: Add Docker Repository
+    apt_repository:
+      repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ubuntu_version.stdout }} stable"
+      state: present
+
+  - name: Update apt packages
+    apt:
+      update_cache: "yes"
+      force_apt_get: "yes"
+
+  - name: Install Docker
+    apt:
+      name: "docker-ce"
+      state: present
+      force_apt_get: "yes"
+
+  - name: Test Docker with hello world example
+    shell: "docker run hello-world"
+    register: hello_world_output
+
+  - name: Show output of hello word example
+    debug:
+      msg: "Container Output: {{hello_world_output.stdout}}"
+
+  - name: Create docker group
+    group:
+      name: "docker"
+      state: present
+
+  - name: Adding user {{ USER }} to docker group  
+    user:
+      name: "{{ USER }}"
+      groups: "docker"
+      append: "yes"
+
+  - name: Reboot server in order for changes to take place
+    shell: "sleep 1 && reboot"
+    async: 1
+    poll: 0
 

@@ -1,6 +1,6 @@
 ---
  - name: Set up environment for the ML pipeline
-   hosts: localhost
+   hosts: new
    become: yes
    tasks:
 
@@ -24,7 +24,7 @@
        name: mlflow
 
  - name: Install Docker
-   hosts: localhost
+   hosts: new
    become: yes
    vars:
      CTOP_VERSION: "0.7.3"
