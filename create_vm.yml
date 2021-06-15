@@ -50,5 +50,3 @@
       known_hosts: name={{ floating_ip }} state=absent
       when: result is changed
 
-    - name: Wait for instance to be ready
-      wait_for: host={{ floating_ip }} port=22 search_regex=OpenSSH delay=60
