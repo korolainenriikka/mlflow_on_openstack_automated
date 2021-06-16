@@ -24,7 +24,7 @@
        name: mlflow
 
  - name: Install Docker
-   hosts: new
+   hosts: mlflow_env
    become: yes
    vars:
      CTOP_VERSION: "0.7.3"
