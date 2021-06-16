@@ -41,3 +41,11 @@ On the control node:
 * Error messagels Auth plugin requires parameters which were not given: auth_url --> you are missing the env variables, download and source the RC file
 
 * A password prompt for ssh key appears in the 'Gathering facts' task of setup_env --> launch ssh agent and add the key
+
+## Next steps
+
+* Add cleanup file for env clearing without deleting the machine
+
+* Parametrize git uri to enable running different projects
+
+* add remote tracking server for saving of identifiers, metrics and artifacts
