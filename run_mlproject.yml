@@ -29,4 +29,4 @@
      - name: Copy zip to control node
        fetch:
          src: /home/ubuntu/mlruns.zip
-         dest: /
+         dest: /home/ubuntu/
