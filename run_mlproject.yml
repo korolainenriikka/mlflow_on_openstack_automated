@@ -1,7 +1,6 @@
 ---
  - name: Run mlflow project
-   hosts: all
-   connection: local
+   hosts: mlflow_env
    become: yes
 
    vars:
@@ -9,17 +8,44 @@
      image_name: mnist-dockerized
 
    tasks:
-     - name: lol
-       shell: cd /home/ubuntu && echo 'LOL' > LLLLLOL.txt
-
      - name: Clone mlproject repository
        ansible.builtin.git:
          repo: "{{ github_uri }}"
          dest: '/home/ubuntu/mnist-project'
        
      - name: Build docker image
-       ansible.builtin.shell: docker build -t mlflow-docker-example -f mnist_project/Dockerfile .
+       ansible.builtin.shell: cd /home/ubuntu/mnist-project && docker build -t mnist-dockerized -f Dockerfile .
 
      - name: Run mlflow project
-       debug: msg='kolmas homma'
+       ansible.builtin.shell: mlflow run mnist-project
+
+# later version: send results to a remote tracking server
+     - name: Zip the mlruns directory
+       archive:
+         path: /home/ubuntu/mlruns/*
+         dest: /home/ubuntu/mlruns.zip
+         format: zip
+
+     - name: Copy zip to control node
+       fetch:
+         src: /home/ubuntu/mlruns.zip
+         dest: /home/ubuntu
+
+ - name: Unzip mlruns on control node
+   hosts: localhost
+   become: yes
+
+   tasks:
+     - name: Install unzip
+       apt: 
+         name: unzip
+
+     - name: Create directory for saving of mlruns
+       ansible.builtin.shell: mkdir /home/ubuntu/mlruns
+
+     - name: Unzip mlruns
+       unarchive:
+         src: /home/ubuntu/128.214.252.158/home/ubuntu/mlruns.zip
+         dest: /home/ubuntu/mlruns/
+
 
