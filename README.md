@@ -24,15 +24,15 @@ On the control node:
 
 ## Run the project
 
-* Clone this project on the control node
+* Clone this project on the control host
 
-* Modify the `vars` file to contain your control node's floating IP address
+* Modify the `vars` file to contain your control host's floating IP address
 
 * Create a virtual machine with `ansible-playbook create_vm.yml`
 
 * Install requirements with `ansible-playbook setup_env.yml -i inventory.txt`
 
-* Run the mnist project with `ansible-playbook run_mlproject.yml -i inventory.txt`
+* Run the mnist project with `ansible-playbook run_mlproject.yml -i inventory.txt`. All logs made by mlflow are stored in a zip file to the home directory of the control host.
 
 * Destroy the virtual machine and its environment after the run with `ansible-playbook cleanup.yml`
 
