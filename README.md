@@ -27,7 +27,9 @@ On the control node:
 
 * Modify the `vars` file to contain your control node's floating IP address
 
-* Create a virtual machine and set it up with MLflow requirements with `ansible-playbook create_vm.yml -i inventory.txt`
+* Create a virtual machine with `ansible-playbook create_vm.yml`
+
+* Install requirements with `ansible-playbook setup_env.yml -i inventory.txt`
 
 * Run the mnist project with `ansible-playbook run_mlproject.yml -i inventory.txt`
 
@@ -35,4 +37,6 @@ On the control node:
 
 ## Troubleshooting
 
-* Auth plugin requires parameters which were not given: auth_url --> you are missing the env variables, download and source the RC file
+* Error messagels Auth plugin requires parameters which were not given: auth_url --> you are missing the env variables, download and source the RC file
+
+* A password prompt for ssh key appears in the 'Gathering facts' task of setup_env --> launch ssh agent and add the key
