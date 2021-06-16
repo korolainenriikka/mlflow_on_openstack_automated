@@ -1,3 +1,1 @@
-control_node_floating_ip: 128.214.252.169
-ssh_key: ansible-control-node
-security_group: SSH-control-node 
+control_node_floating_ip: [insert your control node floating IP] 

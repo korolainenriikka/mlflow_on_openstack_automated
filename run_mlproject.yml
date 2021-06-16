@@ -29,23 +29,4 @@
      - name: Copy zip to control node
        fetch:
          src: /home/ubuntu/mlruns.zip
-         dest: /home/ubuntu
-
- - name: Unzip mlruns on control node
-   hosts: localhost
-   become: yes
-
-   tasks:
-     - name: Install unzip
-       apt: 
-         name: unzip
-
-     - name: Create directory for saving of mlruns
-       ansible.builtin.shell: mkdir /home/ubuntu/mlruns
-
-     - name: Unzip mlruns
-       unarchive:
-         src: /home/ubuntu/128.214.252.158/home/ubuntu/mlruns.zip
-         dest: /home/ubuntu/mlruns/
-
-
+         dest: /

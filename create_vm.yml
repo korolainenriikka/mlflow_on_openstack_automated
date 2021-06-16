@@ -4,6 +4,8 @@
   connection: local
 
   vars:
+    ssh_key: ansible-control-node
+    security_group: SSH-control-node 
     security_groups: default,{{ security_group }} # don't add spaces here!
 
   vars_files:
