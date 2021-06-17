@@ -40,7 +40,7 @@ The default values run [a simple mnist project](https://github.com/korolainenrii
 
 * Run the mnist project with `ansible-playbook run_mlproject.yml -i inventory.txt`. All logs made by mlflow are stored in a zip file to the home directory of the control host.
 
-* Restore the run environment to a pre-run state with `clear_env.yml` (run this between model experiments to avoid confusion and/or name collisions etc.)
+* Restore the run environment to a pre-run state with `ansible-playbook clear_env.yml -i inventory.txt` (run this between model experiments to avoid confusion and/or name collisions etc.)
 
 * Destroy the virtual machine and its environment with `ansible-playbook delete_mlflow_env.yml` (the setup has to be re-launched entirely if you with to change your vm's flavor)
 
