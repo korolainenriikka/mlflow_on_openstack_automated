@@ -53,3 +53,6 @@ The default values run [a simple mnist project](https://github.com/korolainenrii
 ## Next steps
 
 * add remote tracking server for saving of identifiers, metrics and artifacts
+
+* change clear_env to use state:absent instead of rm to avoid unnecessary fails
+
