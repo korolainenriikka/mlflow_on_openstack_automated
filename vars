@@ -1,4 +1,4 @@
 control_node_floating_ip: [insert your control node floating IP]
 vm_flavor: standard.small
-githug_uri: https://github.com/korolainenriikka/mlflow_test.git
+github_uri: https://github.com/korolainenriikka/mlflow_test.git
 image_name: mnist-dockerized
