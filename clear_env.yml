@@ -1,0 +1,19 @@
+---
+ - name: Clear mlflow env to pre-run state
+   hosts: mlflow_env
+   become: yes
+   
+   vars_files:
+     - vars
+   
+   tasks:
+     - name: Delete cloned repository
+       ansible.builtin.shell: rm -rf mlflow-project
+
+     - name: Delete all docker containers and images
+       ansible.builtin.shell: docker rm -vf $(docker ps -a -q) && docker rmi -f $(docker images -a -q)
+       ignore_errors: yes
+       
+     - name: Delete mlruns and mlruns.zip
+       ansible.builtin.shell: rm -rf mlruns && rm mlruns.zip 
+     
