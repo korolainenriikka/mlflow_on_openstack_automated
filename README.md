@@ -28,10 +28,10 @@ On the control node:
 
 * Modify the `vars` file:
     * add your conrol node's floating IP address
-    * select (virtual machine flavor)[https://docs.csc.fi/cloud/pouta/vm-flavors-and-billing/#cpouta-flavors]
+    * select [virtual machine flavor](https://docs.csc.fi/cloud/pouta/vm-flavors-and-billing/#cpouta-flavors)
     * add the uri of the mlproject git repo you wish to run
     * add the image name specified in your project's MLProject file (under docker_env: image:)
-The default values run (a simple mnist project)[https://github.com/korolainenriikka/mlflow_test]
+The default values run [a simple mnist project](https://github.com/korolainenriikka/mlflow_test)
 
 * Create a virtual machine with `ansible-playbook create_vm.yml`
 
