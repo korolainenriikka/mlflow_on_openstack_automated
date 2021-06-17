@@ -18,7 +18,7 @@ On the control node:
 * Configure ssh
     * to add a ssh keypair to control node: run  `nova keypair-add ansible-control-node > openstack-access-key`
     * protect private key file with `chmod 0600 openstack-access-key`
-    * start ssh agent and add private key to the agent with `eval $(ssh-agent) && shh-add openstack-access-key`
+    * start ssh agent and add private key to the agent with `eval $(ssh-agent) && ssh-add openstack-access-key`
 
 ! adding env variables and starting ssh-agent has to be re-run every time a new control node terminal is launched.
 
