@@ -28,7 +28,7 @@
       openstack.cloud.server:
         name: mlflow_env
         image: Ubuntu-20.04
-        flavor: standard.small
+        flavor: {{ vm_flavor }}
         key_name: "{{ ssh_key }}"
         security_groups: "{{ security_groups }}"
       until: (result.openstack is defined)
