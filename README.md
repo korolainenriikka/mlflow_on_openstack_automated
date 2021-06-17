@@ -1,4 +1,4 @@
-# Mnist MLProject run automated with Ansible
+# MLProject setup creation and project run automated with Ansible
 
 ## Pre-requisites
 
@@ -26,7 +26,12 @@ On the control node:
 
 * Clone this project on the control host
 
-* Modify the `vars` file to contain your control host's floating IP address
+* Modify the `vars` file:
+    * add your conrol node's floating IP address
+    * select (virtual machine flavor)[https://docs.csc.fi/cloud/pouta/vm-flavors-and-billing/#cpouta-flavors]
+    * add the uri of the mlproject git repo you wish to run
+    * add the image name specified in your project's MLProject file (under docker_env: image:)
+The default values run (a simple mnist project)[https://github.com/korolainenriikka/mlflow_test]
 
 * Create a virtual machine with `ansible-playbook create_vm.yml`
 
@@ -34,7 +39,9 @@ On the control node:
 
 * Run the mnist project with `ansible-playbook run_mlproject.yml -i inventory.txt`. All logs made by mlflow are stored in a zip file to the home directory of the control host.
 
-* Destroy the virtual machine and its environment after the run with `ansible-playbook cleanup.yml`
+* Restore the run environment to a pre-run state with `clear_env.yml` (run this between model experiments to avoid confusion and/or name collisions etc.)
+
+* Destroy the virtual machine and its environment with `ansible-playbook delete_mlflow_env.yml` (the setup has to be re-launched entirely if you with to change your vm's flavor)
 
 ## Troubleshooting
 
@@ -43,9 +50,5 @@ On the control node:
 * A password prompt for ssh key appears in the 'Gathering facts' task of setup_env --> launch ssh agent and add the key
 
 ## Next steps
-
-* Add cleanup file for env clearing without deleting the machine
-
-* Parametrize git uri to enable running different projects
 
 * add remote tracking server for saving of identifiers, metrics and artifacts
