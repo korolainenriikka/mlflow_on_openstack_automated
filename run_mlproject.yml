@@ -3,21 +3,20 @@
    hosts: mlflow_env
    become: yes
 
-   vars:
-     github_uri: https://github.com/korolainenriikka/mlflow_test.git
-     image_name: mnist-dockerized
+    vars_files:
+    - vars
 
    tasks:
      - name: Clone mlproject repository
        ansible.builtin.git:
          repo: "{{ github_uri }}"
-         dest: '/home/ubuntu/mnist-project'
+         dest: '/home/ubuntu/mlflow-project'
        
      - name: Build docker image
-       ansible.builtin.shell: cd /home/ubuntu/mnist-project && docker build -t mnist-dockerized -f Dockerfile .
+       ansible.builtin.shell: cd /home/ubuntu/mlflow-project && docker build -t {{ image_name }} -f Dockerfile .
 
      - name: Run mlflow project
-       ansible.builtin.shell: mlflow run mnist-project
+       ansible.builtin.shell: mlflow run mlflow-project
 
 # later version: send results to a remote tracking server
      - name: Zip the mlruns directory
