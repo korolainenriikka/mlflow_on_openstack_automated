@@ -1,0 +1,47 @@
+---
+- name: Mount and prepare tracking server on volume
+  hosts: mlflow_env
+  become: yes
+  #vars_prompt:
+  # - name: OS_PASSWORD
+  #  prompt: Enter your OpenStack password
+  
+  tasks:
+    - name: Install MySQL
+      apt:
+        name: mysql-server
+
+    - name: Install volume mounting requirements (openstacksdk)
+      pip:
+        name: virtualenv
+        executable: pip3
+      become_user: root
+
+      #  - name: Copy openstackrc to mlflow env
+      # ansible.builtin.copy:
+      #   src: /home/ubuntu/openrc.sh
+      #  dest: /home/ubuntu
+
+      # - name: Add openstack env variables to remote host
+      # ansible.builtin.expect:
+      #  command: /bin/bash -c "source openrc.sh"
+      # responses:
+      #   (?i)Openstack Password(?i): "{{ OS_PASSWORD }}"
+      # to avoid logging of passwords
+      # no_log: true
+
+    - name: Mount the created volume to the virtual machine
+      openstack.cloud.server_volume:
+        state: present
+        server: mysql-server
+        volume: tracking_server_storage
+        device: /dev/vdb
+
+    - name: Prepare file system on the volume
+      debug: msg="we preppin file system"
+
+    - name: Edit MySQL storage pointer to save on volume
+      debug: msg="changin save point"
+
+    - name: Create a MySQL database meeting tracking server requirements
+      debug: msg="create db, u need to find out mlflow requirements for db"

@@ -1,4 +1,5 @@
-control_node_floating_ip: [insert your control node floating IP]
-vm_flavor: standard.small
+control_node_floating_ip: 128.214.252.xxx
+tracking_storage_size_in_gb: 40
+vm_flavor: standard.medium
 github_uri: https://github.com/korolainenriikka/mlflow_test.git
 image_name: mnist-dockerized

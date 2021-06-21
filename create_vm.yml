@@ -39,10 +39,21 @@
     - name: Create inventory.txt with host information
       ansible.builtin.shell: echo "[mlflow_env]\n{{ floating_ip }} ansible_user=ubuntu" > inventory.txt
 
-    - name: clear ssh known_hosts
+    - name: Clear ssh known_hosts
       known_hosts: name={{ floating_ip }} state=absent
       when: result is changed
 
     - name: Wait for instance to be ready
       wait_for: host={{ floating_ip }} port=22 search_regex=OpenSSH
+
+- name: Create a volume for tracking server storage
+  hosts: localhost
+  connection: local
+  
+  tasks:
+    - name: Create a volume
+      openstack.cloud.volume:
+        size: "{{ tracking_storage_size_in_gb }}"
+        display_name: tracking_server_storage
+        state: present
 
