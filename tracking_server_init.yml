@@ -25,26 +25,29 @@
         src: /home/ubuntu/openrc.sh
         dest: /home/ubuntu
 
-      # - name: Add openstack env variables to remote host
-      # ansible.builtin.expect:
-      #  command: /bin/bash -c "source openrc.sh"
-      # responses:
-      #   (?i)Openstack Password(?i): "{{ OS_PASSWORD }}"
-      # to avoid logging of passwords
-      # no_log: true
-
-    - name: Mount the created volume to the virtual machine
-      openstack.cloud.server_volume:
-        state: present
-        server: mysql-server
-        volume: tracking_server_storage
-        device: /dev/vdb
-
     - name: Prepare file system on the volume
       debug: msg="we preppin file system"
 
     - name: Edit MySQL storage pointer to save on volume
       debug: msg="changin save point"
 
+      #mysql prep commands in shell/mysql:
+      #in mysql: CREATE DATABASE tracking;
+      #mkdir artifacts
+      #sudo pip install pymysql
+      #in mysql: USE mysql;
+      #in mysql: UPDATE user SET plugin='mysql_native_password' WHERE User='root';
+      #in mysql: FLUSH PRIVILEGES;
+      #in mysql: exit;
+      #sudo mlflow server --backend-store-uri mysql+pymysql://root:@localhost:3306/tracking --default-artifact-root /home/ubuntu/artifacts --host 0.0.0.0 
     - name: Create a MySQL database meeting tracking server requirements
-      debug: msg="create db, u need to find out mlflow requirements for db"
+      community.mysql.mysql_db:
+        name: tracking_db
+        state: present
+
+    - name: Change root user authentication plugin in mysql
+      community.mysql.mysql_user:
+        name: root
+        plugin: mysql_native_password
+        state: present
+
