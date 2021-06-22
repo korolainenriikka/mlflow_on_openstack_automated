@@ -4,6 +4,9 @@
    become: yes
 
    tasks:
+   - name: apåt
+     apt: update_cache=yes
+
    - name: Install MySQL
      apt:
        name: mysql-server

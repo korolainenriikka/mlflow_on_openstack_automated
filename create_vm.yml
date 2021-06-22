@@ -49,6 +49,9 @@
 - name: Create a volume for tracking server storage
   hosts: localhost
   connection: local
+
+  vars_files:
+    - vars
   
   tasks:
     - name: Create a volume

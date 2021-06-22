@@ -11,16 +11,19 @@
       apt:
         name: mysql-server
 
+    # this one currently does not work! if not working the mount task gives openstacksdk is required -error
+    # manual ssh and sudo pip install openstacksdk works
     - name: Install volume mounting requirements (openstacksdk)
       pip:
         name: virtualenv
         executable: pip3
       become_user: root
+      become: yes
 
-      #  - name: Copy openstackrc to mlflow env
-      # ansible.builtin.copy:
-      #   src: /home/ubuntu/openrc.sh
-      #  dest: /home/ubuntu
+    - name: Copy openstackrc to mlflow env
+      ansible.builtin.copy:
+        src: /home/ubuntu/openrc.sh
+        dest: /home/ubuntu
 
       # - name: Add openstack env variables to remote host
       # ansible.builtin.expect:
