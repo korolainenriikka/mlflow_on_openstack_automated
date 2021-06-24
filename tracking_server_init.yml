@@ -15,6 +15,11 @@
     - name: Install MySQL
       apt:
         name: mysql-server
+        
+    - name: Copy openstackrc to mlflow env
+      ansible.builtin.copy:
+        src: /home/ubuntu/openrc.sh
+        dest: /home/ubuntu
 
     # this one currently does not work! if not working the mount task gives openstacksdk is required -error
     # manual ssh and sudo pip install openstacksdk works
