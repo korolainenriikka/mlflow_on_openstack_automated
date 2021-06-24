@@ -46,7 +46,7 @@ The default values run [a simple mnist project](https://github.com/korolainenrii
 
 ## Troubleshooting
 
-* Error messagels Auth plugin requires parameters which were not given: auth_url --> you are missing the env variables, download and source the RC file
+* Error messagels Auth plugin requires parameters which were not given: auth_url --> you are missing the env variables, download and source the RC file (openstackrc file does not give any indication on if password was correct or not, so if rc was sourced, the password may have been mistyped)
 
 * A password prompt for ssh key appears in the 'Gathering facts' task of setup_env --> launch ssh agent and add the key
 
