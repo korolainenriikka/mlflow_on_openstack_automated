@@ -1,5 +1,5 @@
-control_node_floating_ip: 128.214.252.xxx
+control_node_floating_ip: 128.214.252.90
 tracking_storage_size_in_gb: 40
-vm_flavor: standard.medium
+vm_flavor: standard.small
 github_uri: https://github.com/korolainenriikka/mlflow_test.git
 image_name: mnist-dockerized
