@@ -2,9 +2,14 @@
 - name: Mount and prepare tracking server on volume
   hosts: mlflow_env
   become: yes
+  become_user: root
   #vars_prompt:
   # - name: OS_PASSWORD
   #  prompt: Enter your OpenStack password
+  #
+  vars:
+    - sql_username: tracking_server_user
+    - sql_password: trackingserver
   
   tasks:
     - name: Install MySQL
@@ -13,17 +18,14 @@
 
     # this one currently does not work! if not working the mount task gives openstacksdk is required -error
     # manual ssh and sudo pip install openstacksdk works
-    - name: Install volume mounting requirements (openstacksdk)
+    - name: Install pip requirements (openstacksdk, pymysql)
       pip:
-        name: virtualenv
+        name: 
+          - openstacksdk
+          - pymysql 
         executable: pip3
       become_user: root
       become: yes
-
-    - name: Copy openstackrc to mlflow env
-      ansible.builtin.copy:
-        src: /home/ubuntu/openrc.sh
-        dest: /home/ubuntu
 
     - name: Prepare file system on the volume
       debug: msg="we preppin file system"
@@ -34,20 +36,59 @@
       #mysql prep commands in shell/mysql:
       #in mysql: CREATE DATABASE tracking;
       #mkdir artifacts
-      #sudo pip install pymysql
       #in mysql: USE mysql;
       #in mysql: UPDATE user SET plugin='mysql_native_password' WHERE User='root';
       #in mysql: FLUSH PRIVILEGES;
       #in mysql: exit;
       #sudo mlflow server --backend-store-uri mysql+pymysql://root:@localhost:3306/tracking --default-artifact-root /home/ubuntu/artifacts --host 0.0.0.0 
+      # - name: Get running processes
+      # shell: "pgrep mysql"
+      #  register: running_processes
+
+      #- name: Force kill stuck processes
+      #      shell: "kill -9 {{ item }}"
+      # with_items: "{{ running_processes }}"
+      #
+      #  - name: Restart mysql
+      #shell: "/etc/init.d/mysql restart"
+  
+      # name: Ensure mysql is running and starts on boot
+      #    service:
+              #    name: mysql
+        #tate: started
+        #nabled: yes
+    
+        # name: Ensure mysql root password is updated for all root accounts
+      #   mysql_user:
+              #ame: root
+        #host: localhost
+        #ogin_unix_socket: /var/run/mysqld/mysqld.sock
+        # password: root_pwd
+        #priv: '*.*:ALL,GRANT'
+        #check_implicit_admin: true
+        # notify: Restart MySQL
+
+
+    - name: Create mysql user for tracking db management
+      community.mysql.mysql_user:
+        login_user: root
+        login_password: root
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        name: "{{ sql_username }}"
+        password: "{{ sql_password }}"
+
     - name: Create a MySQL database meeting tracking server requirements
       community.mysql.mysql_db:
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        login_user: "{{ sql_username }}"
+        login_password: "{{ sql_password }}"
         name: tracking_db
         state: present
 
-    - name: Change root user authentication plugin in mysql
+    - name: Change user authentication plugin in mysql
       community.mysql.mysql_user:
-        name: root
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        name: tracking_server_user
         plugin: mysql_native_password
-        state: present
+        state: present 
 
