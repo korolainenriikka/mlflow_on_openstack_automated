@@ -4,12 +4,25 @@
    become: yes
 
    tasks:
-   - name: apåt
+   - name: Update apt
      apt: update_cache=yes
+     
+   - name: Install python3-pip
+     apt:
+       name: python3-pip
 
    - name: Install MySQL
      apt:
        name: mysql-server
+       
+   - name: Install pip requirements (openstacksdk, pymysql)
+     pip:
+       name:
+         - openstacksdk
+         - pymysql
+        executable: pip3
+     become_user: root
+     become: yes 
 
    - name: Mount the created volume to the virtual machine
      debug: msg="yeau we mountin volume"
@@ -26,15 +39,7 @@
  - name: Set up environment for the ML pipeline
    hosts: mlflow_env
    become: yes
-   tasks:
-
-   - name: Update apt
-     apt:
-       update_cache: yes
-
-   - name: Install python3-pip
-     apt:
-       name: python3-pip
+   tasks: 
 
    - name: Install virtualenv via pip
      pip:
