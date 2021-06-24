@@ -5,28 +5,30 @@
   become_user: root
   
   tasks:
-    - name: Install MySQL
-      apt:
-        name: mysql-server
+        
+    - name: Copy volume setup script to mlflow env
+      ansible.builtin.copy:
+        src: /home/ubuntu/mlflow_on_openstack_automated/volumesetup.sh
+        dest: /home/ubuntu
 
-    # this one currently does not work! if not working the mount task gives openstacksdk is required -error
-    # manual ssh and sudo pip install openstacksdk works
-    - name: Install pip requirements (openstacksdk, pymysql)
-      pip:
-        name: 
-          - openstacksdk
-          - pymysql 
-        executable: pip3
-      become_user: root
-      become: yes
-    
-    - name: Mount volume to the machine
-      openstack.cloud.server_volume:
-        server: mlflow_env
-        volume: tracking_server_storage
+    - name: chmod +x for the volume setup script
+      ansible.builtin.shell: cmd="sudo hmod ugo+x /home/ubuntu/volumesetup.sh"
+          
+          #install mysql and install pip has been moved to setup env yml
+          #this auth dict solves the auth url missing error but gives err unauthorized 
+          #- name: Mount volume to the machine
+          #openstack.cloud.server_volume:
+          #server: mlflow_env
+          #volume: tracking_server_storage
+          #auth:
+          #auth_url: https://pouta.csc.fi:5001/v3
+          # username: korolain
+          # password: 
+          # project_name: project_2004357
+          #   project_domain_name: vesselai
 
-    - name: Prepare file system on the volume
-      debug: msg="we preppin file system"
+    - name: Prepare the volume; create partition, file system and dir to mount
+      ansible.builtin.shell: /home/ubuntu/volumesetup.sh
 
     - name: Edit MySQL storage pointer to save on volume
       debug: msg="changin save point"
