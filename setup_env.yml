@@ -20,7 +20,7 @@
        name:
          - openstacksdk
          - pymysql
-        executable: pip3
+       executable: pip3
      become_user: root
      become: yes 
 

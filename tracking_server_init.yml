@@ -1,5 +1,5 @@
 ---
-- name: Mount and prepare tracking server on volume
+- name: Mount volume and prepare the tracking server
   hosts: mlflow_env
   become: yes
   become_user: root
@@ -12,7 +12,7 @@
         dest: /home/ubuntu
 
     - name: chmod +x for the volume setup script
-      ansible.builtin.shell: cmd="sudo hmod ugo+x /home/ubuntu/volumesetup.sh"
+      ansible.builtin.shell: sudo chmod ugo+x volumesetup.sh
           
           #install mysql and install pip has been moved to setup env yml
           #this auth dict solves the auth url missing error but gives err unauthorized 
@@ -27,58 +27,30 @@
           # project_name: project_2004357
           #   project_domain_name: vesselai
 
-      #    - name: Prepare the volume; create partition, file system and dir to mount
-      # ansible.builtin.shell: /home/ubuntu/volumesetup.sh
-
-    - name: Edit MySQL storage pointer to save on volume
-      debug: msg="changin save point"
+      #- name: Prepare the volume; create partition, file system and dir to mount
+      #ansible.builtin.shell: /home/ubuntu/volumesetup.sh
 
       #mysql prep commands in shell/mysql:
       #mkdir artifacts
       #sudo mlflow server --backend-store-uri mysql+pymysql://root:@localhost:3306/tracking --default-artifact-root /home/ubuntu/artifacts --host 0.0.0.0 
-   
+    - name: Create dirs for artifact and metrics stores (edit to volume+mysql later)
+      ansible.builtin.shell: mkdir artifacts && mkdir metrics
+      ignore_errors: yes
 
-    - name: Create a MySQL database meeting tracking server requirements
-      community.mysql.mysql_db:
-        login_unix_socket: /var/run/mysqld/mysqld.sock
-        check_implicit_admin: true
-        name: tracking_db
-        state: present
+    - name: Launch the tracking server
+      ansible.builtin.shell: mlflow server --backend-store-uri /home/ubuntu/metrics --default-artifact-root /home/ubuntu/artifacts --host 0.0.0.0 &
+
+      #- name: Create a MySQL database meeting tracking server requirements
+      # community.mysql.mysql_db:
+      #  login_unix_socket: /var/run/mysqld/mysqld.sock
+      #  check_implicit_admin: true
+      #  name: tracking_db
+      #  state: present
        
-    - name: Change user authentication plugin in mysql
-      community.mysql.mysql_user:
-        login_unix_socket: /var/run/mysqld/mysqld.sock
-        name: root
-        plugin: mysql_native_password
-        state: present 
-
-    # stuff below from csc demo, does not work
-
-
-    - name: Install firewalld
-      apt: name=firewalld state=present
-
-    - name: Start firewalld
-      service: name=firewalld state=started enabled=yes
-
-    - name: Wait for firewalld
-      pause: seconds=30
-
-    - name: Configure firewalld for ssh
-      firewalld: service=ssh permanent=true state=enabled
-      notify:
-        - restart firewalld
-
-    - name: Configure firewalld for http
-      firewalld: service=http permanent=true state=enabled
-      notify: 
-       - restart firewalld
-
-    - name: Start apache
-      service: name=httpd state=started enabled=yes
-
-  handlers:
-    - name: restart firewalld
-      service: name=firewalld state=restarted
-
+      #- name: Change user authentication plugin in mysql
+      #     community.mysql.mysql_user:
+      #  login_unix_socket: /var/run/mysqld/mysqld.sock
+      #  name: root
+      #  plugin: mysql_native_password
+      #  state: present 
 

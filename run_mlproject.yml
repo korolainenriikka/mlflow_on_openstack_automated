@@ -15,17 +15,10 @@
      - name: Build docker image
        ansible.builtin.shell: cd /home/ubuntu/mlflow-project && docker build -t {{ image_name }} -f Dockerfile .
 
+     - name: Create the mlflow experiment (name from vars)
+       ansible.builtin.shell: mlflow experiments create -n {{ experiment_name }}
+       ignore_errors: yes
+
      - name: Run mlflow project
-       ansible.builtin.shell: mlflow run mlflow-project
+       ansible.builtin.shell: export MLFLOW_TRACKING_URI=http://localhost:5000 && mlflow run --experiment-name {{ experiment_name }} -A net=host mlflow-project
 
-# later version: send results to a remote tracking server
-     - name: Zip the mlruns directory
-       archive:
-         path: /home/ubuntu/mlruns/*
-         dest: /home/ubuntu/mlruns.zip
-         format: zip
-
-     - name: Copy zip to control node
-       fetch:
-         src: /home/ubuntu/mlruns.zip
-         dest: /home/ubuntu/
