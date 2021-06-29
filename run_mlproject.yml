@@ -19,6 +19,9 @@
        ansible.builtin.shell: mlflow experiments create -n {{ experiment_name }}
        ignore_errors: yes
 
+       # current: run failed with no explanation
      - name: Run mlflow project
-       ansible.builtin.shell: export MLFLOW_TRACKING_URI=http://localhost:5000 && mlflow run --experiment-name {{ experiment_name }} -A net=host mlflow-project
+       ansible.builtin.shell: mlflow run -A net=host mlflow-project
+       environment:
+         MLFLOW_TRACKING_URI: http://localhost:5000
 

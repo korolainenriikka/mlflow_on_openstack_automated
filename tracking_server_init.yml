@@ -37,10 +37,12 @@
       ansible.builtin.shell: mkdir artifacts && mkdir metrics
       ignore_errors: yes
 
-    - name: Launch the tracking server
+    - name: Launch the tracking server with 10h time limit
       ansible.builtin.shell: mlflow server --backend-store-uri /home/ubuntu/metrics --default-artifact-root /home/ubuntu/artifacts --host 0.0.0.0 &
-
-      #- name: Create a MySQL database meeting tracking server requirements
+      async: 36000
+      poll: 0
+      #
+      #            ame: Create a MySQL database meeting tracking server requirements
       # community.mysql.mysql_db:
       #  login_unix_socket: /var/run/mysqld/mysqld.sock
       #  check_implicit_admin: true
