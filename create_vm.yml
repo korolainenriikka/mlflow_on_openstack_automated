@@ -67,4 +67,15 @@
         size: "{{ tracking_storage_size_in_gb }}"
         display_name: tracking_server_storage
         state: present
+        availability_zone: nova
+
+    - name: Attach the volume
+      os_server_volume:
+        state: present
+        server: mlflow_env
+        volume: tracking_server_storage
+        device: /dev/vdb
+
+    - name: Create variable to indicate that volume needs to be initialized
+      set_fact: volume_initialized=false
 

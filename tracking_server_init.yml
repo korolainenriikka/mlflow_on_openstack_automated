@@ -10,49 +10,26 @@
       ansible.builtin.copy:
         src: /home/ubuntu/mlflow_on_openstack_automated/volumesetup.sh
         dest: /home/ubuntu
+      when: "{{ volume_initialized }} != true"
 
     - name: chmod +x for the volume setup script
       ansible.builtin.shell: sudo chmod ugo+x volumesetup.sh
-          
-          #install mysql and install pip has been moved to setup env yml
-          #this auth dict solves the auth url missing error but gives err unauthorized 
-          #- name: Mount volume to the machine
-          #openstack.cloud.server_volume:
-          #server: mlflow_env
-          #volume: tracking_server_storage
-          #auth:
-          #auth_url: https://pouta.csc.fi:5001/v3
-          # username: korolain
-          # password: 
-          # project_name: project_2004357
-          #   project_domain_name: vesselai
+    
+    - name: Run the volume setup script
+      ansible.builtin.shell: /home/ubuntu/volumesetup.sh
 
-      #- name: Prepare the volume; create partition, file system and dir to mount
-      #ansible.builtin.shell: /home/ubuntu/volumesetup.sh
+    - name: Set volume initialized flag to true to avoid overwrites
+      set_fact: volume_initialized=true
 
-      #mysql prep commands in shell/mysql:
-      #mkdir artifacts
+    - name: Install sqlite3
+      apt: name=sqlite
+
       #sudo mlflow server --backend-store-uri mysql+pymysql://root:@localhost:3306/tracking --default-artifact-root /home/ubuntu/artifacts --host 0.0.0.0 
-    - name: Create dirs for artifact and metrics stores (edit to volume+mysql later)
-      ansible.builtin.shell: mkdir artifacts && mkdir metrics
-      ignore_errors: yes
 
     - name: Launch the tracking server with 10h time limit
-      ansible.builtin.shell: mlflow server --backend-store-uri /home/ubuntu/metrics --default-artifact-root /home/ubuntu/artifacts --host 0.0.0.0 &
+      ansible.builtin.shell: mlflow server --backend-store-uri sqlite:////media/volume/metrics_store/mlflow.db --default-artifact-root /media/volume/artifact_store --host 0.0.0.0 &
       async: 36000
       poll: 0
-      #
-      #            ame: Create a MySQL database meeting tracking server requirements
-      # community.mysql.mysql_db:
-      #  login_unix_socket: /var/run/mysqld/mysqld.sock
-      #  check_implicit_admin: true
-      #  name: tracking_db
-      #  state: present
-       
-      #- name: Change user authentication plugin in mysql
-      #     community.mysql.mysql_user:
-      #  login_unix_socket: /var/run/mysqld/mysqld.sock
-      #  name: root
-      #  plugin: mysql_native_password
-      #  state: present 
+
+
 

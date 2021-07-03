@@ -1,7 +1,6 @@
 ---
  - name: Run mlflow project
    hosts: mlflow_env
-   become: yes
 
    vars_files:
      - vars
@@ -11,17 +10,21 @@
        ansible.builtin.git:
          repo: "{{ github_uri }}"
          dest: '/home/ubuntu/mlflow-project'
+       become: yes
        
      - name: Build docker image
        ansible.builtin.shell: cd /home/ubuntu/mlflow-project && docker build -t {{ image_name }} -f Dockerfile .
+       become: yes
 
      - name: Create the mlflow experiment (name from vars)
        ansible.builtin.shell: mlflow experiments create -n {{ experiment_name }}
        ignore_errors: yes
+       environment:
+         MLFLOW_TRACKING_URI: http://localhost:5000
 
        # current: run failed with no explanation
      - name: Run mlflow project
-       ansible.builtin.shell: mlflow run -A net=host mlflow-project
+       ansible.builtin.shell: mlflow run --experiment-name mnist -A net=host mlflow-project
        environment:
          MLFLOW_TRACKING_URI: http://localhost:5000
 

@@ -9,4 +9,7 @@ sudo mount /dev/vdb1 /media/volume &&
 
 cd /media/volume &&
 sudo mkdir artifact_store &&
-sudo chown ubuntu artifact_store
+sudo chown ubuntu artifact_store &&
+sudo mkdir metrics_store &&
+sudo chown ubuntu metrics_store
+
