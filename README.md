@@ -35,6 +35,7 @@ On the control node:
 The default values run [a simple mnist project](https://github.com/korolainenriikka/mlflow_test)
 
 * Create a virtual machine with `ansible-playbook create_vm.yml`
+   * The 'Create a virtual machine' task occasionally fails because of the virtual machine spawning taking more time than usually. If this happens, run the delete env yml and re-try.     
 
 * Install requirements with `ansible-playbook setup_env.yml -i inventory.txt`
 
