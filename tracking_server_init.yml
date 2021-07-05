@@ -10,13 +10,16 @@
       ansible.builtin.copy:
         src: /home/ubuntu/mlflow_on_openstack_automated/volumesetup.sh
         dest: /home/ubuntu
-      when: "{{ volume_initialized }} != true"
 
     - name: chmod +x for the volume setup script
       ansible.builtin.shell: sudo chmod ugo+x volumesetup.sh
     
-    - name: Run the volume setup script
-      ansible.builtin.shell: /home/ubuntu/volumesetup.sh
+    - name: Run the volume setup script (fails with non-zeroi return code if volume is already set up)
+      ansible.builtin.expect:
+        command: /home/ubuntu/volumesetup.sh
+        responses:
+          "(.*)Ignore/Cancel?(.*)": Cancel
+      ignore_errors: yes 
 
     - name: Set volume initialized flag to true to avoid overwrites
       set_fact: volume_initialized=true
@@ -24,12 +27,8 @@
     - name: Install sqlite3
       apt: name=sqlite
 
-      #sudo mlflow server --backend-store-uri mysql+pymysql://root:@localhost:3306/tracking --default-artifact-root /home/ubuntu/artifacts --host 0.0.0.0 
-
     - name: Launch the tracking server with 10h time limit
       ansible.builtin.shell: mlflow server --backend-store-uri sqlite:////media/volume/metrics_store/mlflow.db --default-artifact-root /media/volume/artifact_store --host 0.0.0.0 &
       async: 36000
       poll: 0
-
-
 
