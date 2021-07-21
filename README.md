@@ -22,7 +22,7 @@ On the control node:
 
 ! adding env variables and starting ssh-agent has to be re-run every time a new control node terminal is launched.
 
-## Run the project
+## Run a project
 
 * Clone this project on the control host
 
@@ -41,9 +41,8 @@ The default values run [a simple mnist project](https://github.com/korolainenrii
 
 * Install requirements with `ansible-playbook setup_env.yml -i inventory.txt`
 
-* Run the mnist project with `ansible-playbook run_mlproject.yml -i inventory.txt`. All logs made by mlflow are stored in a zip file to the home directory of the control host.
-
-* Restore the run environment to a pre-run state with `ansible-playbook clear_env.yml -i inventory.txt` (run this between model experiments to avoid confusion and/or name collisions etc.)
+* Run your project with `ansible-playbook run_mlproject.yml -i inventory.txt`
+    * If you want to run the same model with a commit version that has an updated Dockerfile, you need to clear the environment with `ansible-playbook clear-env.yml -i inventory.txt` to use the new environment.
 
 * Destroy the virtual machine and its environment with `ansible-playbook delete_mlflow_env.yml` (the setup has to be re-launched entirely if you with to change your vm's flavor)
 

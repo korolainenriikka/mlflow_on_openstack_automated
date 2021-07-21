@@ -6,9 +6,6 @@
      - vars
 
    tasks:
-     - name: Delete previously run repository
-       ansible.builtin.shell: sudo rm -rf mlflow-project
-
      - name: Clone mlproject repository
        ansible.builtin.git:
          repo: "{{ github_uri }}"
