@@ -36,10 +36,7 @@ On the control node:
 
 The default values run [a simple mnist project](https://github.com/korolainenriikka/mlflow_test)
 
-* Create a virtual machine with `ansible-playbook create_vm.yml`
-   * The 'Create a virtual machine' task occasionally fails because of the virtual machine spawning taking more time than usually. If this happens, run the delete env yml and re-try.     
-
-* Install requirements with `ansible-playbook setup_env.yml -i inventory.txt`
+* Run `chmod +x fullinit.sh && ./fullinit.sh` to create a virtual machine, complete installations and launch the remote tracking server. The commands in the script can also be run separately if needed.
 
 * Run your project with `ansible-playbook run_mlproject.yml -i inventory.txt`
     * If you want to run the same model with a commit version that has an updated Dockerfile, you need to clear the environment with `ansible-playbook clear-env.yml -i inventory.txt` to use the new environment.
@@ -52,3 +49,4 @@ The default values run [a simple mnist project](https://github.com/korolainenrii
 
 * A password prompt for ssh key appears in the 'Gathering facts' task of setup_env --> launch ssh agent and add the key
 
+* Creating virtual machine fails without no apparent reason --> virtual machine spawning sometimes takes longer than ansible waits for task completion. Run `ansible-playbook delete_mlflow_env.yml` and then re-try creating the environment.

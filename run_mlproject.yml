@@ -17,7 +17,7 @@
        become: yes
 
      - name: Run mlflow project
-       ansible.builtin.shell: mlflow run --experiment-name {{ experiment_name }} -A net=host mlflow-project{{ entrypoint }} -P alpha=0.4
+       ansible.builtin.shell: mlflow run --experiment-name {{ experiment_name }} -A net=host mlflow-project{{ entrypoint }} -P vm-size={{ vm_flavor }} github-uri={{ github_uri }} {{ hyperparameters }}
        environment:
          MLFLOW_TRACKING_URI: http://localhost:5000
 
