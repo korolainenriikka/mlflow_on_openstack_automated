@@ -1,6 +1,8 @@
-control_node_floating_ip: 128.214.252.90
+control_node_floating_ip: 128.214.253.7
 tracking_storage_size_in_gb: 40
 vm_flavor: standard.small
-github_uri: https://github.com/korolainenriikka/mlflow_test.git
-image_name: mnist-dockerized
-experiment_name: mnist
+
+github_uri: https://github.com/mlflow/mlflow.git
+image_name: mlflow-docker-example
+experiment_name: winequality
+entrypoint: /examples/docker

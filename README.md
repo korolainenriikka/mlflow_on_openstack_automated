@@ -27,10 +27,12 @@ On the control node:
 * Clone this project on the control host
 
 * Modify the `vars` file:
-    * add your conrol node's floating IP address
+    * add your conrol nodes' floating IP address
+    * give a size of the volume created for storing tracking information (only used if tracking volume does not exist already)
     * select [virtual machine flavor](https://docs.csc.fi/cloud/pouta/vm-flavors-and-billing/#cpouta-flavors)
     * add the uri of the mlproject git repo you wish to run
     * add the image name specified in your project's MLProject file (under docker_env: image:)
+    * give the mlprojects' entrypoint, ie the path to MLProject and Dockerfile in your repository
 
 The default values run [a simple mnist project](https://github.com/korolainenriikka/mlflow_test)
 
@@ -47,13 +49,7 @@ The default values run [a simple mnist project](https://github.com/korolainenrii
 
 ## Troubleshooting
 
-* Error messagels Auth plugin requires parameters which were not given: auth_url --> you are missing the env variables, download and source the RC file (openstackrc file does not give any indication on if password was correct or not, so if rc was sourced, the password may have been mistyped)
+* Error message Auth plugin requires parameters which were not given: auth_url --> you are missing the env variables, download and source the RC file (openstackrc file does not give any indication on if password was correct or not, so if rc was sourced, the password may have been mistyped)
 
 * A password prompt for ssh key appears in the 'Gathering facts' task of setup_env --> launch ssh agent and add the key
-
-## Next steps
-
-* add remote tracking server for saving of identifiers, metrics and artifacts
-
-* change clear_env to use state:absent instead of rm to avoid unnecessary fails
 

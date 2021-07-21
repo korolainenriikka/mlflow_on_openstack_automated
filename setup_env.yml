@@ -10,10 +10,6 @@
    - name: Install python-pip
      apt:
        name: python3-pip
-
-   - name: Install MySQL
-     apt:
-       name: mysql-server
        
    - name: Install pip requirements (openstacksdk, pymysql)
      pip:
@@ -23,18 +19,6 @@
        executable: pip3
      become_user: root
      become: yes 
-
-   - name: Mount the created volume to the virtual machine
-     debug: msg="yeau we mountin volume"
-
-   - name: Prepare file system on the volume
-     debug: msg="we preppin file system"
-
-   - name: Edit MySQL storage pointer to save on volume
-     debug: msg="changin save point"
-
-   - name: Create a MySQL database meeting tracking server requirements
-     debug: msg="create db, u need to find out mlflow requirements for db"
 
  - name: Set up environment for the ML pipeline
    hosts: mlflow_env
@@ -52,15 +36,10 @@
      pip:
        name: mlflow
 
-   - name: Configure mlflow to use the MySQL db and volume storage as tracking server
-     debug: msg="run the mlflow server ... command here!"
-
  - name: Install Docker
    hosts: mlflow_env
    become: yes
    vars:
-     CTOP_VERSION: "0.7.3"
-     DOCKER_COMPOSE_VERSION: "1.25.1"
      DOCKER_PACKAGES:
        - apt-transport-https
        - ca-certificates
