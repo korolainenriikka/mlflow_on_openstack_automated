@@ -11,7 +11,7 @@ On the control node:
 * Install ansible: `sudo pip install ansible`
 
 * Install OpenStack command line tools
-    * `sudo pip install python-keystoneclient python-novaclient python-glanceclient python-neutronclient`
+    * `sudo pip install python-openstackclient python-keystoneclient python-novaclient python-glanceclient python-neutronclient`
     * download OpenStack RC file from https://pouta.csc.fi/dashboard/project/api_access/ and transfer it to the control node (easiest way is just to copy-paste contents)
     * run `source <project-name>-openrc.sh` to add the env variables needed to use OpenStack CLI
 
