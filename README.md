@@ -42,10 +42,9 @@ The default values run [a simple mnist project](https://github.com/korolainenrii
     * Use the optional hparams option to specify model hyperparameters (these should be listed in your MLProject file: [example](https://github.com/mlflow/mlflow/blob/master/examples/docker/MLproject))
     * If you want to run the same model with a commit version that has an updated Dockerfile, you need to clear the environment with `ansible-playbook clear-env.yml -i inv.txt` to use the new environment.
 
-* Resize the environment you use for training by running `openstack server resize --flavor [new flavor] mlflow_env`
-    * If the model run logs used hardware to tracking (has line `mlflow.log_artifact(vars.txt)` in train.py), new flavor needs to be updated manually to the vars.txt file
+* Resize the environment you use for training by changing the vm_flavor parameter in `vars.txt` and running `ansible-playbook scale-environment.yml -i inv.txt`
 
-* Destroy the virtual machine and its environment with `ansible-playbook delete_mlflow_env.yml` (the setup has to be re-launched entirely if you with to change your vm's flavor)
+* Destroy the virtual machine and its environment with `ansible-playbook delete_mlflow_env.yml`
 
 ## Troubleshooting
 
