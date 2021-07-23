@@ -26,7 +26,7 @@ On the control node:
 
 * Clone this project on the control host
 
-* Modify the `vars` file:
+* Modify the `vars.txt` file:
     * add your conrol nodes' floating IP address
     * give a size of the volume created for storing tracking information (only used if tracking volume does not exist already)
     * select [virtual machine flavor](https://docs.csc.fi/cloud/pouta/vm-flavors-and-billing/#cpouta-flavors)
