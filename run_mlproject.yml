@@ -3,7 +3,7 @@
    hosts: mlflow_env
 
    vars_files:
-     - vars
+     - vars.txt
 
    tasks:
      - name: Clone mlproject repository
@@ -16,8 +16,25 @@
        ansible.builtin.shell: cd /home/ubuntu/mlflow-project{{ entrypoint }} && docker build -t {{ image_name }} -f Dockerfile .
        become: yes
 
+     - name: chmod dir
+       shell: chmod +w mlflow-project
+       become: yes
+
+     - name: Copy vars file to mlflow env
+       ansible.builtin.copy:
+         src: /home/ubuntu/mlflow_on_openstack_automated/vars.txt
+         dest: /home/ubuntu/mlflow-project
+       become: yes
+
      - name: Run mlflow project
-       ansible.builtin.shell: mlflow run --experiment-name {{ experiment_name }} -A net=host mlflow-project{{ entrypoint }} -P vm-size={{ vm_flavor }} github-uri={{ github_uri }} {{ hyperparameters }}
+       ansible.builtin.shell: mlflow run --experiment-name {{ experiment_name }} -A net=host mlflow-project{{ entrypoint }}
+       when: hparams is undefined
+       environment:
+         MLFLOW_TRACKING_URI: http://localhost:5000
+
+     - name: Run mlflow project with given hyperparameters
+       ansible.builtin.shell: mlflow run --experiment-name {{ experiment_name }} -A net=host mlflow-project{{ entrypoint }} -P {{ hparams }}
+       when: hparams is defined
        environment:
          MLFLOW_TRACKING_URI: http://localhost:5000
 

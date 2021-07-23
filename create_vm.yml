@@ -9,7 +9,7 @@
     security_groups: default,{{ security_group }} # don't add spaces here!
 
   vars_files:
-    - vars
+    - vars.txt
 
   tasks:
     - name: Create security group
@@ -59,7 +59,7 @@
   connection: local
 
   vars_files:
-    - vars
+    - vars.txt
   
   tasks:
     - name: Create a volume
@@ -75,7 +75,4 @@
         server: mlflow_env
         volume: tracking_server_storage
         device: /dev/vdb
-
-    - name: Create variable to indicate that volume needs to be initialized
-      set_fact: volume_initialized=false
 

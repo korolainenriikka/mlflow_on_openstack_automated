@@ -2,10 +2,8 @@
 - name: Mount volume and prepare the tracking server
   hosts: mlflow_env
   become: yes
-  become_user: root
   
-  tasks:
-        
+  tasks:        
     - name: Copy volume setup script to mlflow env
       ansible.builtin.copy:
         src: /home/ubuntu/mlflow_on_openstack_automated/volumesetup.sh
@@ -14,15 +12,12 @@
     - name: chmod +x for the volume setup script
       ansible.builtin.shell: sudo chmod ugo+x volumesetup.sh
     
-    - name: Run the volume setup script (fails with non-zeroi return code if volume is already set up)
+    - name: Run the volume setup script (fails with non-zero return code if volume is already set up)
       ansible.builtin.expect:
         command: /home/ubuntu/volumesetup.sh
         responses:
           "(.*)Ignore/Cancel?(.*)": Cancel
       ignore_errors: yes 
-
-    - name: Set volume initialized flag to true to avoid overwrites
-      set_fact: volume_initialized=true
 
     - name: Install sqlite3
       apt: name=sqlite
