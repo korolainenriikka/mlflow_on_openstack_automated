@@ -44,8 +44,8 @@
     - name: Store the auto-allocated floating IP address
       set_fact: floating_ip={{ result.openstack.public_v4 }}
 
-    - name: Create inventory.txt with host information
-      ansible.builtin.shell: echo "[mlflow_env]\n{{ floating_ip }} ansible_user=ubuntu" > inventory.txt
+    - name: Create inventory file with host information
+      ansible.builtin.shell: echo "[mlflow_env]\n{{ floating_ip }} ansible_user=ubuntu" > inv.txt
 
     - name: Clear ssh known_hosts
       known_hosts: name={{ floating_ip }} state=absent

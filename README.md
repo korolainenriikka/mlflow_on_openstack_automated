@@ -36,11 +36,11 @@ On the control node:
 
 The default values run [a simple mnist project](https://github.com/korolainenriikka/mlflow_test)
 
-* Run `chmod +x fullinit.sh && ./fullinit.sh` to create a virtual machine, complete installations and launch the remote tracking server. The commands in the script can also be run separately if needed.
+* Create virtual machine with `ansible-playbook create_vm.yml`, complete installations with `ansible-playbook setup_env.yml -i inv.txt`, and initialize the remote tracking server with `ansible-playbook tracking_server_init.yml -i inv.txt`
 
-* Run your project with `ansible-playbook run_mlproject.yml -i inventory.txt [-e hparams='param1=value1 param2=value2]`
+* Run your project with `ansible-playbook run_mlproject.yml -i inv.txt [-e hparams='param1=value1 param2=value2]`
     * Use the optional hparams option to specify model hyperparameters (these should be listed in your MLProject file: [example](https://github.com/mlflow/mlflow/blob/master/examples/docker/MLproject))
-    * If you want to run the same model with a commit version that has an updated Dockerfile, you need to clear the environment with `ansible-playbook clear-env.yml -i inventory.txt` to use the new environment.
+    * If you want to run the same model with a commit version that has an updated Dockerfile, you need to clear the environment with `ansible-playbook clear-env.yml -i inv.txt` to use the new environment.
 
 * Destroy the virtual machine and its environment with `ansible-playbook delete_mlflow_env.yml` (the setup has to be re-launched entirely if you with to change your vm's flavor)
 
