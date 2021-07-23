@@ -11,7 +11,7 @@ On the control node:
 * Install ansible: `sudo pip install ansible`
 
 * Install OpenStack command line tools
-    * `sudo pip install python-keystoneclient python-novaclient python-glanceclient python-neutronclient`
+    * `sudo pip install python-openstackclient python-keystoneclient python-novaclient python-glanceclient python-neutronclient`
     * download OpenStack RC file from https://pouta.csc.fi/dashboard/project/api_access/ and transfer it to the control node (easiest way is just to copy-paste contents)
     * run `source <project-name>-openrc.sh` to add the env variables needed to use OpenStack CLI
 
@@ -42,9 +42,14 @@ The default values run [a simple mnist project](https://github.com/korolainenrii
     * Use the optional hparams option to specify model hyperparameters (these should be listed in your MLProject file: [example](https://github.com/mlflow/mlflow/blob/master/examples/docker/MLproject))
     * If you want to run the same model with a commit version that has an updated Dockerfile, you need to clear the environment with `ansible-playbook clear-env.yml -i inv.txt` to use the new environment.
 
+* Resize the environment you use for training by running `openstack server resize --flavor [new flavor] mlflow_env`
+    * If the model run logs used hardware to tracking (has line `mlflow.log_artifact(vars.txt)` in train.py), new flavor needs to be updated manually to the vars.txt file
+
 * Destroy the virtual machine and its environment with `ansible-playbook delete_mlflow_env.yml` (the setup has to be re-launched entirely if you with to change your vm's flavor)
 
 ## Troubleshooting
+
+* 'skipping: no hosts matched' in any play --> the hosts information is missing, -i inv.txt option is missing
 
 * Error message Auth plugin requires parameters which were not given: auth_url --> you are missing the env variables, download and source the RC file (openstackrc file does not give any indication on if password was correct or not, so if rc was sourced, the password may have been mistyped)
 
