@@ -26,7 +26,7 @@ On the control node:
 
 * Clone this project on the control host
 
-* Modify the `vars` file:
+* Modify the `vars.txt` file:
     * add your conrol nodes' floating IP address
     * give a size of the volume created for storing tracking information (only used if tracking volume does not exist already)
     * select [virtual machine flavor](https://docs.csc.fi/cloud/pouta/vm-flavors-and-billing/#cpouta-flavors)
@@ -38,7 +38,8 @@ The default values run [a simple mnist project](https://github.com/korolainenrii
 
 * Run `chmod +x fullinit.sh && ./fullinit.sh` to create a virtual machine, complete installations and launch the remote tracking server. The commands in the script can also be run separately if needed.
 
-* Run your project with `ansible-playbook run_mlproject.yml -i inventory.txt`
+* Run your project with `ansible-playbook run_mlproject.yml -i inventory.txt [-e hparams='param1=value1 param2=value2]`
+    * Use the optional hparams option to specify model hyperparameters (these should be listed in your MLProject file: [example](https://github.com/mlflow/mlflow/blob/master/examples/docker/MLproject))
     * If you want to run the same model with a commit version that has an updated Dockerfile, you need to clear the environment with `ansible-playbook clear-env.yml -i inventory.txt` to use the new environment.
 
 * Destroy the virtual machine and its environment with `ansible-playbook delete_mlflow_env.yml` (the setup has to be re-launched entirely if you with to change your vm's flavor)
