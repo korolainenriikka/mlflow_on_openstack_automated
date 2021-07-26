@@ -1,11 +1,11 @@
 #!/bin/bash
 
 sudo parted -a optimal /dev/vdb mklabel gpt && sudo parted -a optimal /dev/vdb mkpart primary 0% 100% &&
-sudo mkfs.ext4 /dev/vdb1 &&
-sudo e2label /dev/vdb1 artifact-volume &&
+sudo mkfs.ext4 /dev/vdb &&
+sudo e2label /dev/vdb artifact-volume &&
 
 sudo mkdir /media/volume &&
-sudo mount /dev/vdb1 /media/volume &&
+sudo mount /dev/vdb /media/volume &&
 
 cd /media/volume &&
 sudo mkdir artifact_store &&
