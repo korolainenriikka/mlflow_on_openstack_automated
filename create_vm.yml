@@ -31,6 +31,13 @@
         port_range_max: 22
         remote_ip_prefix: "{{ control_node_floating_ip }}/32"
 
+    - openstack.cloud.server_info:
+        name: mlflow_env
+        register: instance_state
+      ignore_errors: yes
+
+    - debug: "{{ instance_state }}"
+
     - name: Create a virtual machine
       register: result
       openstack.cloud.server:
@@ -39,7 +46,14 @@
         flavor: "{{ vm_flavor }}"
         key_name: "{{ ssh_key }}"
         security_groups: "{{ security_groups }}"
+      when: instance_state is not shelved
       until: (result.openstack is defined)
+
+    - name: Unshelve the virtual machine
+      openstack.cloud.server_action:
+        action: unshelve
+        server: mlflow_env
+      when: instance_state is shelved
    
     - name: Store the auto-allocated floating IP address
       set_fact: floating_ip={{ result.openstack.public_v4 }}

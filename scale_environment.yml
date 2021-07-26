@@ -16,3 +16,7 @@
     - name: Confirm resize
       ansible.builtin.shell: openstack server resize confirm mlflow_env
 
+    - name: Re-launch the tracking server
+      ansible.builtin.shell: mlflow server --backend-store-uri sqlite:////media/volume/metrics_store/mlflow.db --default-artifact-root /media/volume/artifact_store --host 0.0.0.0 &
+      async: 36000
+      poll: 0

@@ -1,19 +1,34 @@
 ---
- - name: Clear mlflow env to pre-run state
+ - name: Clean the virtual environment
    hosts: mlflow_env
    become: yes
    
-   vars_files:
-     - vars
-   
    tasks:
-     - name: Delete cloned repository
-       ansible.builtin.shell: rm -rf mlflow-project
-
      - name: Delete all docker containers and images
        ansible.builtin.shell: docker rm -vf $(docker ps -a -q) && docker rmi -f $(docker images -a -q)
        ignore_errors: yes
        
-     - name: Delete mlruns and mlruns.zip
-       ansible.builtin.shell: rm -rf mlruns && rm mlruns.zip 
-     
+     - name: Shut down the remote tracking server
+       ansible.builtin.shell: sudo kill -9 `sudo lsof -t -i:5000`
+       ignore_errors: yes
+
+     - name: Unmount volume
+       ansible.builtin.shell: sudo umount /dev/vdb
+
+ - name: Detach the volume and shelve machine
+   hosts: localhost
+   connection: local
+   
+   tasks:
+     - name: Detach volume
+       os_server_volume:
+         state: absent
+         server: mlflow_env
+         volume: tracking_server_storage
+         device: /dev/vdb
+
+     - name: Shelve mlflow_env virtual machine
+       openstack.cloud.server_action:
+         action: shelve
+         server: mlflow_env    
+
