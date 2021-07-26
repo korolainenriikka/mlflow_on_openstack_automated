@@ -1,5 +1,5 @@
 ---
-- name: Mount volume and prepare the tracking server
+- name: Prepare volume and launch the tracking server
   hosts: mlflow_env
   become: yes
   
