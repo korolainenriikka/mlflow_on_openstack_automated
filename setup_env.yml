@@ -1,5 +1,5 @@
 ---
- - name: Mount and prepare tracking server on volume
+ - name: Set up environment for the ML pipeline
    hosts: mlflow_env
    become: yes
 
@@ -19,11 +19,6 @@
        executable: pip3
      become_user: root
      become: yes 
-
- - name: Set up environment for the ML pipeline
-   hosts: mlflow_env
-   become: yes
-   tasks: 
 
    - name: Install virtualenv via pip
      pip:
