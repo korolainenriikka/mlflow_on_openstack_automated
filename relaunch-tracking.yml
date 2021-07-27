@@ -1,0 +1,25 @@
+---
+ - name: Attach volume
+   hosts: localhost
+   connection: local
+
+   tasks:
+     - os_server_volume:
+         state: present
+         server: mlflow_env
+         volume: tracking_server_storage
+         device: /dev/vdb
+
+ - name: Re-mount volume and launch the the tracking server
+   hosts: mlflow_env
+   become: yes
+  
+   tasks:
+     - name: Re-mount the volume
+       ansible.builtin.shell: sudo mount /dev/vdb /media/volume
+
+     - name: Launch the tracking server with 10h time limit
+       ansible.builtin.shell: mlflow server --backend-store-uri sqlite:////media/volume/metrics_store/mlflow.db --default-artifact-root /media/volume/artifact_store --host 0.0.0.0 &
+       async: 36000
+       poll: 0 
+

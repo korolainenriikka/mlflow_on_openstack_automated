@@ -3,21 +3,22 @@
   hosts: mlflow_env
   become: yes
   
-  tasks:        
+  tasks:
+    - name: Check if metrics store      
     - name: Copy volume setup script to mlflow env
       ansible.builtin.copy:
         src: /home/ubuntu/mlflow_on_openstack_automated/volumesetup.sh
         dest: /home/ubuntu
 
-    - name: chmod +x for the volume setup script
-      ansible.builtin.shell: sudo chmod ugo+x volumesetup.sh
+    - name: chmod +x volumesetup
+      ansible.builtin.shell: sudo chmod +x volumesetup.sh
     
-    - name: Run the volume setup script (fails with non-zero return code if volume is already set up)
+    - name: Run the volume setup script
       ansible.builtin.expect:
         command: /home/ubuntu/volumesetup.sh
         responses:
-          "(.*)Ignore/Cancel?(.*)": Cancel
-      ignore_errors: yes 
+          "(.*)Yes/No?(.*)": Yes
+          "Proceed anyway? (y,N)": y
 
     - name: Install sqlite3
       apt: name=sqlite

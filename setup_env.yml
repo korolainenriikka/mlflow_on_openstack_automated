@@ -31,6 +31,9 @@
      pip:
        name: mlflow
 
+   - name: Install sqlite3
+       apt: name=sqlite 
+
  - name: Install Docker
    hosts: mlflow_env
    become: yes
