@@ -62,6 +62,10 @@ The default values run [a simple mnist project](https://github.com/korolainenrii
 
 * To install the requirements for MLflow on your local machine for experimentation, change the "hosts" lines in `setup.env.yml` to "localhost" and run the installations with `ansible-playbook setup_env.yml`
 
+### Export tracking data from the volume
+
+todo...
+
 ## Troubleshooting
 
 * 'skipping: no hosts matched' in any play --> the hosts information is missing, -i inv.txt option is missing
