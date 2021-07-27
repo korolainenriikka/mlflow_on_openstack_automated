@@ -42,9 +42,25 @@ The default values run [a simple mnist project](https://github.com/korolainenrii
     * Use the optional hparams option to specify model hyperparameters (these should be listed in your MLProject file: [example](https://github.com/mlflow/mlflow/blob/master/examples/docker/MLproject))
     * If you want to run the same model with a commit version that has an updated Dockerfile, you need to clear the environment with `ansible-playbook clear-env.yml -i inv.txt` to use the new environment.
 
-* Resize the environment you use for training by changing the vm_flavor parameter in `vars.txt` and running `ansible-playbook scale-environment.yml -i inv.txt` (not working currently)
+## Other commands
+
+### Cleanup
+
+* Shut the environment down and detach the volume with `ansible-playbook clear_env.yml -i inv.txt`     
 
 * Destroy the virtual machine and its environment with `ansible-playbook delete_mlflow_env.yml`
+
+### Re-launch mlflow tracking with existing run metrics & artifacts data on volume
+
+* If you have previously run the cleanup, restart machine by running `openstack server unshelve mlflow_env`. Alternatively run the commands `ansible-playbook create_vm.yml` and `ansible-playbook setup_env.yml -i inv.txt` to create an environment. Then run `ansible-playbook relaunch-tracking.yml -i inv.txt`.
+
+### Resize the virtual environment
+
+* Change the virtual machine flavor in `vars.txt`. Then run `ansible-playbook resize-environment.yml -i inv.txt`
+
+### Install MLflow requirements on a local machine
+
+* To install the requirements for MLflow on your local machine for experimentation, change the "hosts" lines in `setup.env.yml` to "localhost" and run the installations with `ansible-playbook setup_env.yml`
 
 ## Troubleshooting
 
