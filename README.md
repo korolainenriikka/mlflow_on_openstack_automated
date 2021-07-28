@@ -3,7 +3,7 @@
 ## Pre-requisites
 
 * Create a CSC virual machine via OpenStack web interface
-    * instructions in  https://github.com/korolainenriikka/mlflow_test README: follow 'Initial setup instructions' 
+    * instructions in  https://github.com/korolainenriikka/mlflow_test README: follow instructions under 'Create and run a virtual machine instance & connect remotely' 
 
 On the control node:
 * Install pip and python3-dev: `sudo apt update && sudo apt install -y python3-pip python3-dev`
