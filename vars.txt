@@ -1,4 +1,4 @@
-control_node_floating_ip: 128.214.253.7
+control_node_floating_ip: [add your IP here]
 tracking_storage_size_in_gb: 40
 vm_flavor: standard.medium
 
