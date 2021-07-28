@@ -71,7 +71,7 @@ The default values run [a simple mnist project](https://github.com/korolainenrii
 
 ### Export tracking data from the volume
 
-todo...
+On the control node run  `scp -i [path_to_private_key] -r ubuntu@[mlflow_env_ip]:/media/volume/* ~/export`. Then log out from the control node and run `scp -i [path_to_private_key] ubuntu@[control_node_ip]:~/export/* ~` to copy the tracking data to your local machine. 
 
 ## Troubleshooting
 
