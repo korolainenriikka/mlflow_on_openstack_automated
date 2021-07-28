@@ -19,6 +19,10 @@
           "(.*)Yes/No?(.*)": Yes
           "Proceed anyway? (y,N)": y
       ignore_errors: yes
+      
+    - name: Kill processes runnning on port 5000
+      ansible.builtin.shell: sudo kill -9 `sudo lsof -t -i:5000`
+      ignore_errors: yes
 
     - name: Launch the tracking server with 10h time limit
       ansible.builtin.shell: mlflow server --backend-store-uri sqlite:////media/volume/metrics_store/mlflow.db --default-artifact-root /media/volume/artifact_store --host 0.0.0.0 &
