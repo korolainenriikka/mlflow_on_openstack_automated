@@ -6,7 +6,6 @@
   vars_files:
     - vars.txt
 
-
   tasks:
     - name: Shut down the remote tracking server
       ansible.builtin.shell: sudo kill -9 `sudo lsof -t -i:5000`
