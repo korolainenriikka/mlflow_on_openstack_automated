@@ -63,7 +63,7 @@ The default values run [a simple mnist project](https://github.com/korolainenrii
 
 ### Resize the virtual environment
 
-* Change the virtual machine flavor in `vars.txt`. Then run `ansible-playbook resize-environment.yml -i inv.txt`
+* Change the virtual machine flavor in `vars.txt`. Then run `ansible-playbook resize_environment.yml -i inv.txt`
 
 ### Install MLflow requirements on a local machine
 
