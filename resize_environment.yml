@@ -2,6 +2,10 @@
 - name: Shut down tracking
   hosts: mlflow_env
   become: yes
+  
+  vars_files:
+    - vars.txt
+
 
   tasks:
     - name: Shut down the remote tracking server
