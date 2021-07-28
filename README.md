@@ -1,26 +1,30 @@
 # MLProject setup creation and project run automated with Ansible
 
+This setup can be used to
+* create a control node for managing virtual environments where the MLflow projects are run
+* initialize and manage a remote tracking server for saving and comparing MLflow project run metrics and artifacts (models)
+
 ## Pre-requisites
 
-* Create a CSC virual machine via OpenStack web interface
+* Create a virtual machine via OpenStack web interface
     * instructions in  https://github.com/korolainenriikka/mlflow_test README: follow instructions under 'Create and run a virtual machine instance & connect remotely' 
 
-On the control node:
+On the control node (the one just created):
 * Install pip and python3-dev: `sudo apt update && sudo apt install -y python3-pip python3-dev`
 
 * Install ansible: `sudo pip install ansible`
 
 * Install OpenStack command line tools
     * `sudo pip install python-openstackclient python-keystoneclient python-novaclient python-glanceclient python-neutronclient`
-    * download OpenStack RC file from https://pouta.csc.fi/dashboard/project/api_access/ and transfer it to the control node (easiest way is just to copy-paste contents)
-    * run `source <project-name>-openrc.sh` to add the env variables needed to use OpenStack CLI
+    * download OpenStack RC file from the openstack web interface (CSC: https://pouta.csc.fi/dashboard/project/api_access/) and transfer it to the control node (easiest way is just to copy-paste contents)
+    * run `source [openrc_filename]` to add the env variables needed to use OpenStack CLI (the script will give no indication on if the password was correct, try re-sourcing this if you get an authentication error)
 
 * Configure ssh
     * to add a ssh keypair to control node: run  `nova keypair-add ansible-control-node > openstack-access-key`
     * protect private key file with `chmod 0600 openstack-access-key`
     * start ssh agent and add private key to the agent with `eval $(ssh-agent) && ssh-add openstack-access-key`
 
-! adding env variables and starting ssh-agent has to be re-run every time a new control node terminal is launched.
+! sourcing the RC file and starting ssh-agent has to be re-run every time a new control node terminal is launched.
 
 ## Run a project
 
