@@ -33,18 +33,16 @@ On the control node (the one just created):
 * Modify the `vars.txt` file:
     * add your conrol nodes' floating IP address
     * give a size of the volume created for storing tracking information (only used if tracking volume does not exist already)
-    * select [virtual machine flavor](https://docs.csc.fi/cloud/pouta/vm-flavors-and-billing/#cpouta-flavors)
-    * add the uri of the mlproject git repo you wish to run
+    * select [virtual machine flavor](https://docs.csc.fi/cloud/pouta/vm-flavors-and-billing/#cpouta-flavors) (if you change this param later you need to run resize before the change takes place, see below)
+    * add the uri of the mlproject git repository you wish to run
     * add the image name specified in your project's MLProject file (under docker_env: image:)
-    * give the mlprojects' entrypoint, ie the path to MLProject and Dockerfile in your repository
+    * give the mlprojects' entrypoint, i.e. the path to MLProject and Dockerfile in your repository
 
-The default values run [a simple mnist project](https://github.com/korolainenriikka/mlflow_test)
+The default values run [a simple mnist project](https://github.com/korolainenriikka/mlflow_test). On how to make your own model a MLflow project, see instructions in [MLflow documentation](https://mlflow.org/docs/latest/projects.html#specifying-projects) (use a Docker environment) and [the mlflow docker exaple project](https://github.com/mlflow/mlflow/tree/master/examples/docker). If you want your project to log the `vars.txt` contents to tracking (mainly to save information on the vm size used), add the line `mlflow.log_artifact('vars.txt')` to your projects' code inside the ` with mlflow.start_run():` block.
 
 * Create virtual machine with `ansible-playbook create_vm.yml`, complete installations with `ansible-playbook setup_env.yml -i inv.txt`, and initialize the remote tracking server with `ansible-playbook tracking_server_init.yml -i inv.txt`
-   * The tracking server should be running and accessible in http://[mlflow_env_ip]:5000 
-      * You see the environments' IP in the ansible terminal output     
    * If volume setup script gets stuck (todo: fix extect command & remove ignore_errors): run `ssh ubuntu@[mlflow_env_ip]` and `./volumesetup.sh`. Answer yes to any prompts appearing (only on a blank volume!)
-      
+      * You see the environments' IP in the ansible terminal output  
 
 * Run your project with `ansible-playbook run_mlproject.yml -i inv.txt [-e hparams='param1=value1 param2=value2]`
     * Use the optional hparams option to specify model hyperparameters (these should be listed in your MLProject file: [example](https://github.com/mlflow/mlflow/blob/master/examples/docker/MLproject))
@@ -61,6 +59,7 @@ The default values run [a simple mnist project](https://github.com/korolainenrii
 ### Re-launch mlflow tracking with existing run metrics & artifacts data on volume
 
 * If you have previously run the cleanup, restart machine by running `openstack server unshelve mlflow_env`. Alternatively run the commands `ansible-playbook create_vm.yml` and `ansible-playbook setup_env.yml -i inv.txt` to create an environment. Then run `ansible-playbook relaunch-tracking.yml -i inv.txt`.
+   * The relaunch will fail with the message "Cannot 'attach_volume' instance ... while it is in vm_state shelved_offloaded" if the unshelve operation is not finished.
 
 ### Resize the virtual environment
 
