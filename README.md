@@ -41,6 +41,8 @@ On the control node (the one just created):
 The default values run [a simple mnist project](https://github.com/korolainenriikka/mlflow_test)
 
 * Create virtual machine with `ansible-playbook create_vm.yml`, complete installations with `ansible-playbook setup_env.yml -i inv.txt`, and initialize the remote tracking server with `ansible-playbook tracking_server_init.yml -i inv.txt`
+   * If volume setup script gets stuck (todo: fix extect command & remove ignore_errors): run `ssh ubuntu@[mlflow_env_ip]` and `./volumesetup.sh`. Answer yes to any prompts appearing (only on a blank volume!)
+      * You see the environments' IP in the ansible terminal output  
 
 * Run your project with `ansible-playbook run_mlproject.yml -i inv.txt [-e hparams='param1=value1 param2=value2]`
     * Use the optional hparams option to specify model hyperparameters (these should be listed in your MLProject file: [example](https://github.com/mlflow/mlflow/blob/master/examples/docker/MLproject))
