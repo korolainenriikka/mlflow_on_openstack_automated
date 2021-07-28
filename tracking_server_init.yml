@@ -4,7 +4,6 @@
   become: yes
   
   tasks:
-    - name: Check if metrics store      
     - name: Copy volume setup script to mlflow env
       ansible.builtin.copy:
         src: /home/ubuntu/mlflow_on_openstack_automated/volumesetup.sh
