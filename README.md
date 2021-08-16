@@ -1,8 +1,12 @@
 # MLProject setup creation and project run automated with Ansible
 
 This setup can be used to
-* create a control node for managing virtual environments where the MLflow projects are run
-* initialize and manage a remote tracking server for saving and comparing MLflow project run metrics and artifacts (models)
+* run MLflow projects that use a Docker environment
+* view the runs in the UI using a remote tracking server
+
+Bugs remaining in this setup
+* expect module in tracking server initializations' volume preparation does not work correctly. You need to ssh to the environment, run `./volumesetup.sh` and answer to the prompts (agree/yes/etc. if the volume is empty. If not, do not use the tracking server init playbook)
+* wait commands should be added to resize play for it to work every time.
 
 ## Pre-requisites
 
@@ -64,10 +68,6 @@ The default values run [a simple mnist project](https://github.com/korolainenrii
 ### Resize the virtual environment
 
 * Change the virtual machine flavor in `vars.txt`. Then run `ansible-playbook resize_environment.yml -i inv.txt`
-
-### Install MLflow requirements on a local machine
-
-* To install the requirements for MLflow on your local machine for experimentation, change the "hosts" lines in `setup.env.yml` to "localhost" and run the installations with `ansible-playbook setup_env.yml`
 
 ### Export tracking data from the volume
 
