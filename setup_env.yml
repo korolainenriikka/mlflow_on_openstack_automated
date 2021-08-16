@@ -1,6 +1,6 @@
 ---
  - name: Set up environment for the ML pipeline
-   hosts: mlflow_env
+   hosts: localhost
    become: yes
 
    tasks:
@@ -35,7 +35,7 @@
      apt: name=sqlite 
 
  - name: Install Docker
-   hosts: mlflow_env
+   hosts: localhost
    become: yes
    vars:
      DOCKER_PACKAGES:
